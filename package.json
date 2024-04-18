@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "MONGODB=HARIs nodemon index",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "mon":"NODE_ENV=mongodb+srv://HARISUDHAN1611:Hari1611%21@cluster0.iqfirm0.mongodb.net/nodeDay3 nodemon index"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

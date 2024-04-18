@@ -5,7 +5,7 @@ app.use(bodyParser.json());
 const {mongoose,connectDB}=require('./db')
 const{signupModel,teachersModel,studentsModel}=require('./schema')
 
-console.log(process.env,"process")
+const myprocess=require('dotenv').config()
 
 connectDB();
 
