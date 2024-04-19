@@ -6,12 +6,15 @@ const {mongoose,connectDB}=require('./db')
 const{signupModel,teachersModel,studentsModel}=require('./schema')
 
 const myprocess=require('dotenv').config()
+const cors=require('cors');
+app.use(cors());
 
 connectDB();
-
+console.log(process.env.MONGO_DB)
 app.get('/',async (req,res)=>{
     
     console.log(mongoose.connection.readyState)
+
     res.send('started')
 });
 

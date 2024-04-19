@@ -1,6 +1,7 @@
 const mongoose=require('mongoose')
+const myprocess=require('dotenv').config()
 
-const mongoDB='mongodb+srv://HARISUDHAN1611:Hari1611%21@cluster0.iqfirm0.mongodb.net/nodeDay3'
+const mongoDB=process.env.MONGO_DB
 
 const connectDB=async()=>{
     await mongoose.connect(mongoDB);
