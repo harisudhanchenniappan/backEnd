@@ -32,7 +32,7 @@ app.get('/date-time',(req,res)=>{
         return;
         }
         console.log('added')
-        res.send('addeddddd ')
+        res.send(a)
     })
 })
 
