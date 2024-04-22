@@ -25,13 +25,14 @@ const data1=[]
         
 
 
-app.post('/date-time',(req,res)=>{
+app.get('/date-time',(req,res)=>{
     fs.writeFile(`current date-time.txt`,a,{flag:'w+'},(err)=>{
         if(err){
             console.log(err)
         return;
         }
         console.log('added')
+        res.send('addeddddd ')
     })
 })
 
