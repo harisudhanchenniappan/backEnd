@@ -7,7 +7,7 @@ const app=express();
 app.use(bodyParser.json());
 const {connectDb,mongoose}=require('./db')
 const {createUserSchema,forgotPasswordModel}=require('./schema')
-const bcrypt=require('bcrypt')
+
 const cors=require('cors')
 app.use(cors());
 
