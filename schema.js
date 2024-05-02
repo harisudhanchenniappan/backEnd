@@ -2,27 +2,22 @@
 const {mongoose}=require('./db')
 const schema=mongoose.Schema
 
-const createRoom=new schema({
-numberOfSeats:{type:Number},
-pricePerHour:{type:Number},
-amenities:{type:Array},
-roomID:{type:Number},
-bookedStatus:{type:Boolean}
+const createMentor=new schema({
+mentorName:{type:String},
+students:{type:Array}
 })
 
-const bookRoom=new schema({
-    customerName:{type:String},
-    date:{type:Date},
-    startTime:{type:Number},
-    endTime:{type:Number},
-    roomID:{type:Number}
+const createStudent=new schema({
+    studentName:{type:String},
+    mentor:{type:String},   
+    previousMentor:{type:String}
 })
 
 
-const roomModel=mongoose.model('rooms',createRoom)
-const bookRoomModel=mongoose.model('book-room',bookRoom)
+const createMentorModel=mongoose.model('mentor',createMentor)
+const createStudentModel=mongoose.model('students',createStudent)
 
 module.exports={
-    roomModel,
-    bookRoomModel
+    createMentorModel,
+    createStudentModel
 }

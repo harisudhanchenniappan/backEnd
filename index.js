@@ -1,7 +1,7 @@
 const bodyParser = require('body-parser');
 const express=require('express');
 const { mongoose,connectdb } = require('./db');
-const { roomModel, bookRoomModel } = require('./schema');
+const { createMentorModel, createStudentModel } = require('./schema');
 const app=express();
 app.use(bodyParser.json())
 
@@ -11,63 +11,73 @@ app.get('/',(req,res)=>{
     res.send('started')
 })
 
-app.post('/createRoom',(req,res)=>{
-    roomModel.create({
-        numberOfSeats:req.body.numberOfSeats,
-        pricePerHour:req.body.pricePerHour,
-        amenities:req.body.amenities,
-        roomID:req.body.roomID,
-        bookedStatus:false
+app.post('/createMentor',(req,res)=>{
+    createMentorModel.create({
+        mentorName:req.body.name,
+       students:[]
     }).then((dbres)=>res.send(dbres)).catch((err)=>console.error(err))
 })
 
-app.post('/bookRoom',async(req,res)=>{
-    let id=req.body.roomID
-   const availableRoom=await roomModel.findOne({roomID:id})
-   console.log(availableRoom);
-   if(availableRoom){
-    bookRoomModel.create({
-        customerName:req.body.customerName,
-        date:req.body.date,
-        startTime:req.body.startTime,
-        endTime:req.body.endTime,
-        roomID:id
-    }).then((dbres)=>res.send(dbres))
-   await roomModel.findOneAndUpdate({roomID:id},{$set:{bookedStatus:true}},{new:true})
-   }
-   else
-   res.send('room unavailable')
+app.post('/createStudent',async(req,res)=>{
     
-})
-
-app.get('/bookedRooms',async(req,res)=>{
-   res.send(await bookRoomModel.find({}))
+    createStudentModel.create({
+        studentName:req.body.name,
+        mentor:'',
+        previousMentor:''
+        
+    }).then((dbres)=>res.send(dbres))
    
 })
 
-app.get('/bookedCustomer',async(req,res)=>{
-   res.send( await bookRoomModel.aggregate([{$group:{_id:'$customerName',
-    rooms:{$push:'$roomID'},
-    date:{$push:'$date'},
-    startTime:{$push:'$startTime'},
-    endtTime:{$push:'$endTime'}
-    }}]))
+app.get('/mentors',async(req,res)=>{
+    res.send(await createMentorModel.find({}))
 })
 
-app.get('/numberOfTimesBooked',async(req,res)=>{
-    res.send( await bookRoomModel.aggregate([{$group:{_id:'$customerName',
-    NumberOfTimesBooked:{$sum:1},
-    rooms:{$push:'$roomID'},
-    date:{$push:'$date'},
-    startTime:{$push:'$startTime'},
-    endtTime:{$push:'$endTime'},
-    bookingID:{$push:'$_id'} ,   
+app.get('/students',async(req,res)=>{
+    res.send(await createStudentModel.find({}))
+})
+
+app.patch('/addStudents',async(req,res)=>{
+   const students=req.body.students;
+   const allStudents=await createStudentModel.find({mentor:''})
+   let allStudents1=allStudents.map(student=>student.studentName)
+   const newStudents=[]
+   for(const student of students){
+    if(allStudents1.includes(student))
+    newStudents.push(student)
+   }
+   await createMentorModel.findOneAndUpdate({mentorName:req.body.name},{$set:{students:newStudents}},{new:true}).then(()=>res.send('updated successfully'))
+})
+
+
+
+app.patch('/addMentor',async(req,res)=>{
+    const student=await createStudentModel.find({studentName:req.body.name})
+    const prevMentor=student[0].mentor
+    console.log(prevMentor);
+    await createStudentModel.findOneAndUpdate({studentName:req.body.name},{$set:{mentor:req.body.mentor,previousMentor:prevMentor}},{new:true}).then(()=>res.send(`updated successfully`))
     
-    }}  
-
-]))
 })
+
+app.get('/studentsOfMentor',async(req,res)=>{
+   const mentor=await createMentorModel.find({mentorName:req.body.name})
+   res.send(mentor[0].students.join('\n'))
+})
+
+app.get('/previousMentor',async(req,res)=>{
+    const student=await createStudentModel.find({studentName:req.body.name})
+    res.send(student[0].previousMentor)
+ })
 
 app.listen(4000,()=>{
     console.log('server started @4000')
 })
+
+/*app.get('/bookedCustomer',async(req,res)=>{
+    res.send( await bookRoomModel.aggregate([{$group:{_id:'$customerName',
+     rooms:{$push:'$roomID'},
+     date:{$push:'$date'},
+     startTime:{$push:'$startTime'},
+     endtTime:{$push:'$endTime'}
+     }}]))
+ })*/
