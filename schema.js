@@ -12,10 +12,17 @@ const forgotPassword=new schema({
     randomString:{type:String},
     id:{type:String}
 })
+
+const shortUrl=new schema({
+    longUrl:{type:String},
+    hashValue:{type:String},
+    shortUrl:{type:String}
+})
 const createUserSchema=mongoose.model('users',createUser)
 const forgotPasswordModel=mongoose.model('forgot_password',forgotPassword)
-
+const shortUrlModel=mongoose.model('short-url',shortUrl)
 module.exports={
     createUserSchema,
     forgotPasswordModel,
+    shortUrlModel
 }

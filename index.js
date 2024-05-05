@@ -1,12 +1,9 @@
 const express=require('express');
 const bodyParser=require('body-parser');
-const nodemailer = require("nodemailer");
-
-//const { connectDb } = require('./db');
 const app=express();
 app.use(bodyParser.json());
 const {connectDb,mongoose}=require('./db')
-const {createUserSchema,forgotPasswordModel}=require('./schema')
+const {createUserSchema,forgotPasswordModel, shortUrlModel}=require('./schema')
 
 const cors=require('cors')
 app.use(cors());
@@ -15,7 +12,7 @@ app.use(cors());
 connectDb();
 
 const findUser=async(req,res)=>{
-    res.send(await createUserSchema.find({}))
+    res.send(await shortUrlModel.find({}))
 }
 
 const verifyOtp=async(req,res)=>{
@@ -28,31 +25,18 @@ const changePassword=async(req,res)=>{
    res.send(user)
 }
 
-
-const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false, // Use `true` for port 465, `false` for all other ports
-    auth: {
-      user: "acharisudhan1611@gmail.com",
-      pass: "hari2611!",
-    },
-  });
-  
-  // async..await is not allowed in global scope, must use a wrapper
-  async function main(req,res) {
-    // send mail with defined transport object
-    const info = await transporter.sendMail({
-      from: '<acharisudhan1611@gmail.com>', // sender address
-      to: req.body.email, // list of receivers
-      subject: "otp ✔", // Subject line
-      text: req.body.randomString, // plain text body
-      
-    });
-  
-    console.log("Message sent: %s", info.messageId);
-    
+const handleLogin=async(req,res)=>{
+    console.log(req.query.password)
+    const user =await createUserSchema.find({
+        username:req.query.username,
+        password:req.query.password
+        
+    })
+    res.send(user)
 }
+
+
+
 
 
 
@@ -90,12 +74,22 @@ app.get('/verifyOtp',(req,res)=>{
     verifyOtp(req,res)
 })
 
-app.post('/sendMail',(req,res)=>{
-    main(req,res).catch(console.error);
-})
+
 
 app.patch('/changePassword',(req,res)=>{
     changePassword(req,res)
+})
+
+app.get('/login',(req,res)=>{
+    handleLogin(req,res)
+})
+
+app.post('/createShortUrl',(req,res)=>{
+    shortUrlModel.create({
+        longUrl:req.body.longUrl,
+        hashValue:req.body.hashValue,
+        shortUrl:`www.urlShortner/${req.body.hashValue}`
+    }).then((dbres)=>res.send(dbres))
 })
 
 app.listen(4001,()=>{
