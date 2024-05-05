@@ -12,7 +12,7 @@ app.use(cors());
 connectDb();
 
 const findUser=async(req,res)=>{
-    res.send(await shortUrlModel.find({}))
+    res.send(await createUserSchema.find({}))
 }
 
 const verifyOtp=async(req,res)=>{
@@ -90,6 +90,9 @@ app.post('/createShortUrl',(req,res)=>{
         hashValue:req.body.hashValue,
         shortUrl:`www.urlShortner/${req.body.hashValue}`
     }).then((dbres)=>res.send(dbres))
+})
+app.get('/urls',async(req,res)=>{
+    res.send(await shortUrlModel.find({}))
 })
 
 app.listen(4001,()=>{
