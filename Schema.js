@@ -8,6 +8,7 @@ const SignupSchema= new Schema({
 
 });
 
+
 const SignupModel=mongoose.model('Signups1',SignupSchema);
 
 module.exports={

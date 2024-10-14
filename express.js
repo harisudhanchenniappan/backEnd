@@ -3,11 +3,13 @@ const app=express();
 const bodyParser=require('body-parser')
 const {connectDB}=require('./db')
 const {SignupModel}=require('./Schema')
+const myprocess=require('dotenv').config()
 
 
 app.use(bodyParser.json())
 
 connectDB();
+console.log(myprocess.parsed.MongoDB)
 
 app.get('/',(req,res)=>{
     res.send('server running successfully')
